@@ -1,250 +1,390 @@
-#  $$\color{red}  \textbf{Project} \ \  \textbf{InsureOps}$$
- 
+# 🚀 InsureOps - DevOps CI/CD Automation Project
 
+## 📌 Project Overview
 
+**InsureOps** is a complete DevOps CI/CD automation project designed to automate the build, testing, containerization, and deployment process of a Java-based insurance application.
 
-InsureOps was having trouble managing their software because it was all one big piece. </br>
-As they grew bigger, it became even harder to manage. <br>
+As the application scaled, managing deployments manually became difficult and error-prone. To solve this, a fully automated DevOps pipeline was implemented using industry-standard tools such as Jenkins, Docker, GitHub, SonarQube, and AWS.
 
-### $\color{orange} \textbf{Requirements}$
+The project demonstrates real-world DevOps practices including Continuous Integration (CI), Continuous Deployment (CD), Infrastructure Automation, Containerization, and Cloud Deployment.
 
-#### 1. Automated Deployment:</br>
-Whenever a developer makes changes to the code and pushes them to the main branch of the Git repository, </br>
-Jenkins should automatically start a deployment process.
-</br>
-#### 2. CI/CD Pipeline: </br>
-Jenkins should: </br>
+---
 
-* Check out the latest code from the main branch.
-* Compile and test the code to ensure it works correctly
-* Package the application into a container using Docker.
-* Deploy the containerized application
+# 🏗️ Project Architecture
 
-With DevOps Approch I used several devops tools such as  <br>
+```text
+Developer → GitHub → Jenkins Pipeline → Maven Build → SonarQube Scan 
+→ Docker Build → DockerHub → AWS EC2 Deployment
+```
 
-- Git: Managed code changes with version control. </br>
-- Jenkins: Automated integration, testing, and deployment processes. </br>
-- Docker: Containerized applications for consistency and scalability. </br>
-- AWS: Provided infrastructure for hosting and deploying the application. </br>
- Together, these tools streamlined development, testing, and deployment, ensuring efficient management of the InsureMe project. </br>
+---
 
-### $\color{orange} \textbf{Project} \\ \textbf{Summary}$
+# 🎯 Project Requirements
 
-- Create  EC2 instance on Amazon Web Services (AWS)
-- These servers will host application and manage its deployment.
-- Install Jenkins  server to automate the process of building, testing, and deploying application.
-- Set up Jenkins to watch your code repository on GitHub.
-- Whenever someone makes changes to the code and pushes them to GitHub, Jenkins automatically kicks off a process to update and deploy application.
-- Used Docker to package application and its dependencies into a container, making it easy to deploy and run anywhere.
-- After that write a pipeline in Jenkins to build, test, and deploy your application automatically.
-- This pipeline runs every time someone makes changes to the code, ensuring that the latest version of your application is always available.
-- Whenever someone pushes changes to the code, Jenkins pulls the latest code, builds the application, creates a Docker image, and pushes it to DockerHub (a service for storing Docker images).
-- Then, it deploys the updated application 
-- With this setup, you  can fully automated process for building, testing, and deploying your application.
-- Whenever someone make changes to the code, Jenkins takes care of the rest, ensuring that your application is always up-to-date and running smoothly on your servers.</p>
+## 1️⃣ Automated Deployment
 
-## Project Steps
+Whenever developers push code changes to the `main` branch of the Git repository, Jenkins automatically triggers the deployment pipeline.
 
-### Launch ubuntu instance(t2.medium)
+---
 
-### install jenkins
-````
+## 2️⃣ CI/CD Pipeline
+
+The Jenkins pipeline performs the following tasks automatically:
+
+- Pull latest source code from GitHub
+- Build the application using Maven
+- Run code quality analysis using SonarQube
+- Create Docker image
+- Push Docker image to DockerHub
+- Deploy containerized application on AWS EC2
+
+---
+
+# 🛠️ DevOps Tools Used
+
+| Tool | Purpose |
+|------|----------|
+| Git | Version control and source code management |
+| GitHub | Remote repository hosting |
+| Jenkins | CI/CD automation server |
+| Maven | Build automation and dependency management |
+| Docker | Containerization platform |
+| SonarQube | Code quality and security analysis |
+| AWS EC2 | Cloud infrastructure hosting |
+| DockerHub | Docker image repository |
+
+---
+
+# ☁️ AWS Infrastructure Setup
+
+- Created Ubuntu EC2 instance (`t2.medium`)
+- Configured security groups and networking
+- Installed Jenkins, Docker, Maven, AWS CLI
+- Hosted application deployment environment
+
+---
+
+# 📋 Project Workflow
+
+1. Developer pushes code to GitHub
+2. GitHub webhook triggers Jenkins pipeline
+3. Jenkins pulls latest source code
+4. Maven builds and packages the application
+5. SonarQube performs code quality analysis
+6. Docker image is created
+7. Docker image is pushed to DockerHub
+8. Application container is deployed on AWS EC2
+
+---
+
+# ⚙️ Server Setup
+
+## 🔹 Install Jenkins
+
+```bash
 sudo apt update
-sudo apt install fontconfig openjdk-21-jre  -y
+sudo apt install fontconfig openjdk-21-jre -y
+
 sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
-  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+
 echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
-  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-  /etc/apt/sources.list.d/jenkins.list > /dev/null
+https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+/etc/apt/sources.list.d/jenkins.list > /dev/null
+
 sudo apt-get update
 sudo apt-get install jenkins -y
-````
-### install docker
-````
+```
+
+---
+
+## 🔹 Install Docker
+
+```bash
 sudo apt install docker.io -y
 sudo systemctl start docker
+
 sudo usermod -aG docker jenkins
 sudo usermod -aG docker ubuntu
+
 newgrp docker
+
 sudo chmod 777 /var/run/docker.sock
-````
+```
 
-**SonarQube**
-````
+---
+
+## 🔹 Install SonarQube
+
+```bash
 docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
-````
-### install maven
-````
+```
+
+---
+
+## 🔹 Install Maven
+
+```bash
 sudo apt install maven -y
-````
+```
 
-### aws cli
-````
+---
+
+## 🔹 Install AWS CLI
+
+```bash
 sudo apt install unzip -y
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
+-o "awscliv2.zip"
+
 unzip awscliv2.zip
+
 sudo ./aws/install
-````
-### install below plugins
-````
-stage view
-````
-````
-maven integration
-````
-````
-sonarqube scanner
-````
-````
-aws credentials
-````
-````
-s3 publisher
-````
-````
-docker
-````
+```
 
-### configure tools in Manage Jenkins-> Tools
-![project](./images/p1.png)
-![project](./images/p2.png)
+---
 
-### add credentials 
+# 🔌 Jenkins Plugins Used
 
-![project](./images/p3.png)
-![project](./images/p4.png)
-![project](./images/p5.png)
-### Click on Dashboard and create new project and select project type as *pipeline* project
+- Stage View
+- Maven Integration
+- SonarQube Scanner
+- AWS Credentials
+- S3 Publisher
+- Docker
 
+---
 
+# 🔐 Jenkins Configuration
 
-### setup webhook
-![project](./images/webhook.png)
-![project](./images/p7.png)
+## Configure Tools
+Navigate to:
+
+```text
+Manage Jenkins → Tools
+```
+
+Configure:
+- Maven
+- SonarQube Scanner
+- JDK
+
+---
+
+## Configure Credentials
+
+Add:
+- GitHub Credentials
+- DockerHub Credentials
+- AWS Credentials
+- SonarQube Token
+
+---
+
+# 🔗 GitHub Webhook Setup
+
+Configure GitHub webhook to trigger Jenkins automatically on every push event.
+
+```text
+GitHub Repository → Settings → Webhooks
+```
+
+Webhook URL:
+
+```text
+http://<JENKINS_PUBLIC_IP>:8080/github-webhook/
+```
+
+---
+
+# 📦 Jenkins Pipeline
+
+## Jenkinsfile
 
 ```groovy
 pipeline {
     agent any 
+
     tools{
         maven 'maven'
     }
+
     environment {
-     SCANNER_HOME = tool 'sonar-scanner'
-     S3_BUCKET = "project-insure-me-build-artifacts-store-oncdecb36"
-     REGION = "ap-southeast-1"
-     warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
-     }
+        SCANNER_HOME = tool 'sonar-scanner'
+        S3_BUCKET = "project-insure-me-build-artifacts-store"
+        REGION = "ap-south-1"
+        warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
+    }
+
     stages {
-        stage('code-pull'){
-            steps{
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mukundDeo9325/Project-InsureMe1.git']])
+
+        stage('Code Pull') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/your-username/insureops.git'
+                    ]]
+                )
             }
         }
-        stage('code-build'){
-            steps{
+
+        stage('Build Application') {
+            steps {
                 sh 'mvn clean package'
             }
         }
-        
-        stage("code-test") {
+
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-server') {
                     sh '''
-                        $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectKey=InsureMe \
-                        -Dsonar.projectName=InsureMe \
-                        -Dsonar.sources=src \
-                        -Dsonar.java.binaries=target/classes
+                    $SCANNER_HOME/bin/sonar-scanner \
+                    -Dsonar.projectKey=InsureOps \
+                    -Dsonar.projectName=InsureOps \
+                    -Dsonar.sources=src \
+                    -Dsonar.java.binaries=target/classes
                     '''
                 }
             }
         }
 
-        stage("code-test-quality gate") {
+        stage('Quality Gate') {
             steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                waitForQualityGate abortPipeline: false
+            }
+        }
+
+        stage('Push Artifact to S3') {
+            steps {
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: 'aws-cred',
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                    aws s3 cp ${warFile} \
+                    s3://${S3_BUCKET}/Artifacts/ \
+                    --region ${REGION}
+                    '''
                 }
             }
         }
-        stage('code-push'){
-            steps{
-                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                   sh 'aws s3 cp ${warFile} s3://${S3_BUCKET}/Artifacts/ --region ${REGION}'
-                 }
-            }
-        }
-       stage('docker-image'){
-            steps{
-                sh 'docker build -t mukunddeo9325/insuremeB .'
-                
-            }
-        }
-        
-        stage('image-push'){
+
+        stage('Build Docker Image') {
             steps {
-       	       withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-            	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                sh 'docker push mukunddeo9325/insuremeB'
-               }
+                sh 'docker build -t your-dockerhub-username/insureops .'
             }
-        } 
-        
-        stage('code-deploy'){
-            steps{
-                sh 'docker run -itd --name insure-me -p 8089:8081 mukunddeo9325/insuremeB'
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker-cred',
+                        passwordVariable: 'dockerHubPassword',
+                        usernameVariable: 'dockerHubUser'
+                    )
+                ]) {
+
+                    sh '''
+                    docker login -u ${dockerHubUser} -p ${dockerHubPassword}
+                    docker push your-dockerhub-username/insureops
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                sh '''
+                docker run -itd \
+                --name insureops \
+                -p 8089:8081 \
+                your-dockerhub-username/insureops
+                '''
             }
         }
     }
 }
 ```
 
-# without dockerhub
-````
-pipeline {
-    agent any 
+---
 
-    tools {
-        maven 'maven-3'
-    }
+# 🐳 Docker Commands
 
-   environment {
-     S3_BUCKET = "project-insure-me-build-artifacts-store"
-     REGION = "ap-south-1"
-     warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
-   }
+## Build Docker Image
 
+```bash
+docker build -t insureops .
+```
 
-stages{
-    stage('code-pull'){
-        steps{
-            checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mukundDeo9325/Project-InsureMe1.git']])
-        }
-    }
+## Run Docker Container
 
-    stage('code-build'){
-        steps{
-            sh 'mvn clean package'
-        }
-    }
-    
-    stage('push-to-s3'){
-        steps{
-            withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-               sh 'aws s3 cp ${warFile} s3://${S3_BUCKET}/Backup/ --region ${REGION}'
-             }
-        }
-    }
-     stage('docker-image'){
-        steps{
-            sh 'docker build -t insure-me .'
-        }
-    }
-    stage('code-deploy'){
-        steps{
-            sh 'docker run -itd --name insure-me -p 8089:8081 insure-me '
-        }
-    }
- }
-}
-````
+```bash
+docker run -itd --name insureops -p 8089:8081 insureops
+```
+
+---
+
+# 📈 CI/CD Benefits Achieved
+
+✅ Automated Build Process  
+✅ Continuous Integration  
+✅ Continuous Deployment  
+✅ Faster Release Cycle  
+✅ Improved Code Quality  
+✅ Containerized Deployment  
+✅ Reduced Manual Errors  
+✅ Scalable Infrastructure  
+
+---
+
+# 📸 Screenshots
+
+Add project screenshots here:
+
+```text
+images/
+├── jenkins-dashboard.png
+├── sonar-dashboard.png
+├── docker-container.png
+├── pipeline-success.png
+└── aws-deployment.png
+```
+
+---
+
+# 🚀 Future Enhancements
+
+- Kubernetes Deployment
+- Terraform Infrastructure Automation
+- Monitoring with Prometheus & Grafana
+- Helm Charts
+- Blue-Green Deployment
+- GitHub Actions Integration
+
+---
+
+# 👨‍💻 Author
+
+### Ketan Dhadve
+
+DevOps Engineer | Cloud Enthusiast | CI/CD Automation
+
+---
+
+# 📚 Conclusion
+
+InsureOps successfully demonstrates a real-world DevOps CI/CD implementation using Jenkins, Docker, SonarQube, GitHub, and AWS.
+
+The project automates the entire software delivery lifecycle, ensuring reliable, scalable, and efficient deployments while reducing manual intervention and improving development productivity.
+
+---
+
+# ⭐ If you like this project
+
+Give this repository a ⭐ on GitHub.
