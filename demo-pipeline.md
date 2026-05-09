@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('pull') {
             steps {
-                 git branch: 'main', url: 'https://github.com/abhipraydhoble/Project-InsureMe.git'
+                 git branch: 'main', url: 'https://github.com/CloudwithKetan/InsureOps.git'
             }
           
         }
@@ -40,14 +40,14 @@ pipeline {
         maven 'maven'
     }
     environment {
-     S3_BUCKET = "project-insure-me-build-artifacts-store-oncdecb36"
+     S3_BUCKET = "project-insure-me-build-artifacts"
      REGION = "ap-southeast-1"
      warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
      }
     stages {
         stage('code-pull'){
             steps{
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/abhipraydhoble/Project-InsureMe.git']])
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/CloudwithKetan/InsureOps.git']])
             }
         }
         stage('code-build'){
@@ -66,7 +66,7 @@ pipeline {
         }
        stage('docker-image'){
             steps{
-                sh 'docker build -t abhipraydh96/insureb67 .'
+                sh 'docker build -t cloudwithketan/insuremeb .'
                 
             }
         }
@@ -75,14 +75,14 @@ pipeline {
             steps {
        	       withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
             	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                sh 'docker push abhipraydh96/insureb67'
+                sh 'docker push cloudwithketan/insuremeb'
                }
             }
         } 
         
         stage('code-deploy'){
             steps{
-                sh 'docker run -itd --name insure-me -p 8089:8081 abhipraydh96/insureb67'
+                sh 'docker run -itd --name insure-me -p 8089:8081 cloudwithketan/insuremeb'
             }
         }
     }
