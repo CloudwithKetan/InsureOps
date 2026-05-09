@@ -8,7 +8,7 @@ pipeline {
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
         S3_BUCKET = "project-insure-me-build-artifacts-b31"
-        REGION = "us-east-2"
+        REGION = "us-east-1"
         warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
     }
 
@@ -16,7 +16,7 @@ pipeline {
 
         stage('code-pull') {
             steps {
-                git branch: 'main', url: 'https://github.com/abhipraydhoble/Project-InsureMe.git'
+                git branch: 'main', url: 'https://github.com/CloudwithKetan/InsureOps.git'
             }
         }
 
@@ -39,8 +39,8 @@ pipeline {
                 withSonarQubeEnv('sonar-server') {
                     sh '''
                         $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectKey=InsureMe \
-                        -Dsonar.projectName=InsureMe \
+                        -Dsonar.projectKey=InsureOps \
+                        -Dsonar.projectName=InsureOps \
                         -Dsonar.sources=src \
                         -Dsonar.java.binaries=target/classes
                     '''
@@ -57,7 +57,7 @@ pipeline {
         }
      stage('docker-image'){
             steps{
-                sh 'docker build -t abhipraydh96/insure-b31 .'
+                sh 'docker build -t cloudwithketan/insuremeb .'
                 
             }
         }
@@ -73,7 +73,7 @@ pipeline {
         
         stage('code-deploy'){
             steps{
-                sh 'docker run -itd --name insure-me -p 8089:8081 abhipraydh96/insure-b31'
+                sh 'docker run -itd --name insure-me -p 8089:8081 cloudwithketan/insuremeb'
             }
         }
 
