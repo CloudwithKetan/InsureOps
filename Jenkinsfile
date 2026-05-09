@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
-        S3_BUCKET = "project-insure-me-build-artifacts-b31"
+        S3_BUCKET = "balti-bucket-pune"
         REGION = "us-east-1"
         warFile = "target/Insurance-0.0.1-SNAPSHOT.jar"
     }
@@ -26,11 +26,21 @@ pipeline {
             }
         }
         
-         stage('code-push'){
-            steps{
-                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                   sh 'aws s3 cp ${warFile} s3://${S3_BUCKET}/Artifacts/ --region ${REGION}'
-                 }
+        stage('code-push') {
+            steps {
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: 'aws-cred',
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                    aws s3 cp ${warFile} \
+                    s3://${S3_BUCKET}/Artifacts/ \
+                    --region ${REGION}
+                    '''
+                }
             }
         }
 
@@ -38,11 +48,11 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar-server') {
                     sh '''
-                        $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectKey=InsureOps \
-                        -Dsonar.projectName=InsureOps \
-                        -Dsonar.sources=src \
-                        -Dsonar.java.binaries=target/classes
+                    $SCANNER_HOME/bin/sonar-scanner \
+                    -Dsonar.projectKey=InsureOps \
+                    -Dsonar.projectName=InsureOps \
+                    -Dsonar.sources=src \
+                    -Dsonar.java.binaries=target/classes
                     '''
                 }
             }
@@ -55,25 +65,42 @@ pipeline {
                 }
             }
         }
-     stage('docker-image'){
-            steps{
+
+        stage('docker-image') {
+            steps {
                 sh 'docker build -t cloudwithketan/insuremeb .'
-                
             }
         }
         
-        stage('image-push'){
+        stage('image-push') {
             steps {
-       	       withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-            	sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                sh 'docker push cloudwithketan/insuremeb'
-               }
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'docker-cred',
+                        passwordVariable: 'dockerHubPassword',
+                        usernameVariable: 'dockerHubUser'
+                    )
+                ]) {
+
+                    sh '''
+                    docker login -u ${dockerHubUser} -p ${dockerHubPassword}
+                    docker push cloudwithketan/insuremeb
+                    '''
+                }
             }
         } 
         
-        stage('code-deploy'){
-            steps{
-                sh 'docker run -itd --name insure-me -p 8089:8081 cloudwithketan/insuremeb'
+        stage('code-deploy') {
+            steps {
+                sh '''
+                docker stop insure-me || true
+                docker rm insure-me || true
+
+                docker run -itd \
+                --name insure-me \
+                -p 8089:8081 \
+                cloudwithketan/insuremeb
+                '''
             }
         }
 
