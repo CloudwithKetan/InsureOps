@@ -93,7 +93,8 @@ pipeline {
         stage('code-deploy') {
             steps {
                 sh '''
-                
+                docker stop insure-me || true
+                docker rm insure-me || true
 
                 docker run -itd \
                 --name insure-me \
