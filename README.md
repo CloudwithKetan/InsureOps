@@ -224,7 +224,7 @@ pipeline {
                 checkout scmGit(
                     branches: [[name: '*/main']],
                     userRemoteConfigs: [[
-                        url: 'https://github.com/your-username/insureops.git'
+                        url: 'https://github.com/cloudwithketan/insureops.git'
                     ]]
                 )
             }
